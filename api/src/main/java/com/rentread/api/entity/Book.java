@@ -2,8 +2,6 @@ package com.rentread.api.entity;
 
 import java.time.LocalDateTime;
 
-import com.rentread.api.enumeration.BookStatus;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,19 +20,29 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "book_tbl")
+@Table(name = "books")
 public class Book {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "book_id") 
 	private Long id;
 	
+	@Column(nullable = false)
 	private String title;
-	private String author;
-	private String genre;
-	private BookStatus bookStatus;
 	
+	@Column(nullable = false)
+	private String author;
+	
+	@Column(nullable = false)
+	private String genre;
+	
+	@Column(name = "availability_status", nullable = false)
+	private Boolean availabilityStatus = true;
+	
+	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
+	
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 	
 	@PrePersist

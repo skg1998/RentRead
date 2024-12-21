@@ -38,16 +38,22 @@ public class Rental {
     @JoinColumn(name = "book_id", referencedColumnName = "book_id")
 	private Book book;
 	
-	private LocalDateTime createdAt;
-	private LocalDateTime updatedAt;
+	@Column(nullable = false)
+    private Boolean active = true;
+	
+	@Column(name = "rented_at", nullable = false)
+    private LocalDateTime rentedAt = LocalDateTime.now();
+
+    @Column(name = "returned_at")
+    private LocalDateTime returnedAt;
 	
 	@PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        this.rentedAt = LocalDateTime.now();
     }
     
     @PreUpdate
     protected void preUpdate() {
-        this.updatedAt = LocalDateTime.now();
+        this.returnedAt = LocalDateTime.now();
     }
 }

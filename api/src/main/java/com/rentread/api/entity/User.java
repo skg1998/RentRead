@@ -6,6 +6,8 @@ import com.rentread.api.enumeration.Role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -29,13 +31,26 @@ public class User {
 	@Column(name = "user_id") 
 	private Long id;
 	
+	@Column(nullable = false, unique = true)
 	private String email;
-	private String password;
-	private String firstName;
-	private String lastName;
-	private Role role;
 	
+	@Column(nullable = false)
+	private String password;
+	
+	@Column(name = "first_name", nullable = false)
+	private String firstName;
+	
+	@Column(name = "last_name")
+	private String lastName;
+	
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private Role role = Role.USER;
+	
+	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
+	
+	@Column(name = "updated_at")
 	private LocalDateTime updatedAt;
 	
 	@PrePersist

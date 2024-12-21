@@ -1,0 +1,32 @@
+package com.rentread.api.dto;
+
+import com.rentread.api.entity.User;
+import com.rentread.api.enumeration.Role;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@Builder
+public class UserResponse {
+	private final Long id;
+    private final String email;
+    private final String firstName;
+    private final String lastName;
+    private final Role role;
+    
+    public static UserResponse convert(User user) {
+        return UserResponse.builder()
+            .id(user.getId())
+            .email(user.getEmail())
+            .firstName(user.getFirstName())
+            .lastName(user.getLastName())
+            .role(user.getRole())
+            .build();
+    }
+}
