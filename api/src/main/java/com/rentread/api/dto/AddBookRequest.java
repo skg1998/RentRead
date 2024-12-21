@@ -1,7 +1,6 @@
 package com.rentread.api.dto;
 
-import com.rentread.api.enumeration.BookStatus;
-
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,8 +11,19 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddBookRequest {
-	private String title;
-	private String author;
-	private String genre;
-	private Boolean bookStatus;
+	@NotEmpty(message = "Title is required.")
+    private String title;
+
+    @NotEmpty(message = "Author is required.")
+    private String author;
+
+    @NotEmpty(message = "Genre is required.")
+    private String genre;
+
+    private Boolean bookStatus;
+
+    // Custom getter to provide a default value for bookStatus
+    public Boolean getBookStatus() {
+        return bookStatus == null ? true : bookStatus;
+    }
 }
