@@ -25,5 +25,8 @@
 - GET /rent/book/{bookId} - rent a book
 - GET /rent/book/return/{bookId} - return a book
 
+## Usage
+> this application is implemented on the basis of Basic Auth, so you have to path email and passowrd with all secure request. Also implemented Authrization (ADMIN, USER)
+
 ## Postman Collection
 [Rental Management.postman_collection.json](https://github.com/user-attachments/files/18219216/Rental.Management.postman_collection.json)
