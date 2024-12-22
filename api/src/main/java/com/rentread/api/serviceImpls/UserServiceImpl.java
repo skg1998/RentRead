@@ -77,12 +77,12 @@ public class UserServiceImpl implements UserService {
         return CustomUserDetails.create(user);
     }
 
-    @Override
-    public UserDetails loadUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("User not found with ID: " + id));
-        return CustomUserDetails.create(user);
-    }
+//    @Override
+//    public UserDetails loadUserById(Long id) {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() -> new NotFoundException("User not found with ID: " + id));
+//        return CustomUserDetails.create(user);
+//    }
 
     @Override
     public User findById(Long id) {
@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-    public Authentication getAuthentication() {
+    private Authentication getAuthentication() {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 

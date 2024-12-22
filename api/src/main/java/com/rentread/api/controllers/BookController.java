@@ -21,6 +21,7 @@ import com.rentread.api.dto.SuccessResponse;
 import com.rentread.api.dto.UpdateBookRequest;
 import com.rentread.api.service.BookService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,14 +32,14 @@ public class BookController {
 	
 	@PostMapping("/")
 	@PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AppResponse> addBook(@RequestBody AddBookRequest addBookRequest) {
+    public ResponseEntity<AppResponse> addBook(@Valid @RequestBody AddBookRequest addBookRequest) {
 		bookService.addBook(addBookRequest);
         return responseMaker("add book successfully", HttpStatus.OK, null);
     }
 	
 	@PutMapping("/{bookId}")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<AppResponse> updateBook(@PathVariable("bookId") long bookId, @RequestBody UpdateBookRequest updateBookRequest) {
+    public ResponseEntity<AppResponse> updateBook(@PathVariable("bookId") long bookId,@Valid @RequestBody UpdateBookRequest updateBookRequest) {
 		bookService.updateBook(bookId, updateBookRequest);
         return responseMaker("update book successfully", HttpStatus.OK, null);
     }

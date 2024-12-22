@@ -22,6 +22,7 @@ import com.rentread.api.dto.UpdateUserDto;
 import com.rentread.api.dto.UserResponse;
 import com.rentread.api.service.UserService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -31,19 +32,19 @@ public class UserController {
 	private final UserService userService;
 	
 	@PostMapping("/register")
-    public ResponseEntity<AppResponse> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<AppResponse> register(@Valid @RequestBody RegisterDto registerDto) {
 		userService.register(registerDto);
         return responseMaker("user register successfully", HttpStatus.CREATED, null);
     }
 	
 	@PostMapping("/login")
-    public ResponseEntity<AppResponse> login(@RequestBody LoginDto loginDto) {
+    public ResponseEntity<AppResponse> login(@Valid @RequestBody LoginDto loginDto) {
 		UserResponse userResponse = userService.login(loginDto);
         return responseMaker("user login successfully", HttpStatus.OK, userResponse);
     }
 	
 	@PutMapping("/update-profile")
-    public ResponseEntity<AppResponse> updateProfile(@RequestBody UpdateUserDto updateUserDto) {
+    public ResponseEntity<AppResponse> updateProfile(@Valid @RequestBody UpdateUserDto updateUserDto) {
 		userService.updateProfile(updateUserDto);
         return responseMaker("update user profile successfully", HttpStatus.OK, null);
     }

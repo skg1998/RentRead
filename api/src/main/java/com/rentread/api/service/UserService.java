@@ -20,8 +20,8 @@ public interface UserService {
 	
 	//internal use only
 	public UserDetails loadUserByEmail(final String email);
-	public UserDetails loadUserById(Long id);
+	public User findByEmail(String email);
+	//public UserDetails loadUserById(Long id);
 	public User findById(Long id);
 	public User getUser();
-	public User findByEmail(String email);
 }

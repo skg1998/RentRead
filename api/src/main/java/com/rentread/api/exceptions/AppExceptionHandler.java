@@ -7,6 +7,7 @@ import org.apache.coyote.BadRequestException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -72,7 +74,8 @@ public class AppExceptionHandler {
         MethodArgumentTypeMismatchException.class,
         IllegalArgumentException.class,
         ConstraintViolationException.class,
-        MissingRequestHeaderException.class
+        MissingRequestHeaderException.class,
+        DataIntegrityViolationException.class
     })
     public final ResponseEntity<AppResponse> handleBadRequestException(final Exception e) {
         log.error(e.toString(), e.getMessage());
@@ -89,6 +92,12 @@ public class AppExceptionHandler {
     public final ResponseEntity<AppResponse> handleNotFoundException(final NotFoundException e) {
         log.error(e.toString(), e.getMessage());
         return build(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+    
+    @ExceptionHandler(com.rentread.api.exceptions.BadRequestException.class)
+    public final ResponseEntity<AppResponse> handleBadRequestException(final com.rentread.api.exceptions.BadRequestException e) {
+        log.error(e.toString(), e.getMessage());
+        return build(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler({
