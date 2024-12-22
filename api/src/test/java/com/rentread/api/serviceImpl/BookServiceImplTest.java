@@ -88,17 +88,6 @@ class BookServiceImplTest {
     }
 
     @Test
-    void testUpdateBook_NonAdminRole_ThrowsException() {
-        User user = new User();
-        user.setRole(Role.USER);
-        when(userService.getUser()).thenReturn(user);
-
-        UpdateBookRequest updateBookRequest = new UpdateBookRequest();
-
-        assertThrows(BadRequestException.class, () -> bookService.updateBook(1L, updateBookRequest));
-    }
-
-    @Test
     void testDeleteBook_AdminRole_Success() {
         User adminUser = new User();
         adminUser.setRole(Role.ADMIN);

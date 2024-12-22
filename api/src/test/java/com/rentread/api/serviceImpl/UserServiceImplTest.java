@@ -135,19 +135,29 @@ class UserServiceImplTest {
     void testUpdateProfile_Success() {
         UpdateUserDto updateUserDto = new UpdateUserDto("NewFirstName", "NewLastName");
         User user = new User();
+        user.setId(1L); // Ensure ID is set correctly
+        user.setFirstName("OldFirstName");
+        user.setLastName("OldLastName");
         user.setEmail("test@example.com");
 
+        // Mock SecurityContext and Authentication
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
         when(authentication.isAuthenticated()).thenReturn(true);
         when(authentication.getPrincipal()).thenReturn(CustomUserDetails.create(user));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(user));
 
+        // Mock UserRepository behavior
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+
+        // Call the method under test
         userService.updateProfile(updateUserDto);
 
+        // Verify and assert
         verify(userRepository, times(1)).save(user);
         assertEquals("NewFirstName", user.getFirstName());
+        assertEquals("NewLastName", user.getLastName());
     }
+
 
     @Test
     void testDeleteUser_Success() {
