@@ -1,7 +1,6 @@
 package com.rentread.api.serviceImpls;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -19,17 +18,23 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class RentalServiceImple implements RentalService{
-	private final RentalRepository rentalRepository;
-	private final BookRepository bookRepository;
-	private final UserService userService;
-	
-	@Override
-	public RentalDto rentBook(long bookId) {
-		User user = userService.getUser();
-//		// Check if the user exists
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+public class RentalServiceImpl implements RentalService {
+
+    private final RentalRepository rentalRepository;
+    private final BookRepository bookRepository;
+    private final UserService userService;
+
+    @Override
+    @Transactional
+    public RentalDto rentBook(long bookId) {
+        // Get the current authenticated user
+        User user = userService.getUser();
+
+        // Check if the user has less than two active rentals
+        int activeRentalCount = rentalRepository.countByUserAndActive(user, true);
+        if (activeRentalCount >= 2) {
+            throw new IllegalStateException("User cannot have more than two active rentals");
+        }
 
         // Check if the book exists and is available
         Book book = bookRepository.findById(bookId)
@@ -38,28 +43,22 @@ public class RentalServiceImple implements RentalService{
         if (Boolean.FALSE.equals(book.getAvailabilityStatus())) {
             throw new IllegalStateException("Book is currently unavailable");
         }
-        
-        // Check if the user already has an active rental
-        Optional<Rental> activeRental = rentalRepository.findByUserAndActive(user, true);
-        if (activeRental.isPresent()) {
-            throw new IllegalStateException("User already has an active rental");
-        }
 
-        // Create the rental
+        // Create and save the rental
         Rental rental = new Rental();
         rental.setUser(user);
         rental.setBook(book);
         rental.setRentedAt(LocalDateTime.now());
         rental.setActive(true);
 
-        // Mark the book as unavailable
+        // Update the book's availability status
         book.setAvailabilityStatus(false);
         bookRepository.save(book);
-        
+
         // Save the rental
         Rental savedRental = rentalRepository.save(rental);
 
-     // Return RentalDto
+        // Build and return the RentalDto
         return RentalDto.builder()
                 .rentalId(savedRental.getId())
                 .userId(user.getId())
@@ -69,28 +68,30 @@ public class RentalServiceImple implements RentalService{
                 .rentedAt(savedRental.getRentedAt())
                 .active(savedRental.getActive())
                 .build();
-	}
+    }
 
-	@Override
-	@Transactional
-	public void renturnBook(long rentalId) {
-		Optional<Rental> optionalRental = rentalRepository.findById(rentalId);
-		Rental rental = optionalRental.orElseThrow(() -> new IllegalArgumentException("Rental not found for given id"));
-		
-		if (Boolean.FALSE.equals(rental.getActive())) {
-            throw new IllegalArgumentException("Rental is already completed");
+    @Override
+    @Transactional
+    public void renturnBook(long rentalId) {
+        // Fetch the rental by ID
+        Rental rental = rentalRepository.findById(rentalId)
+                .orElseThrow(() -> new IllegalArgumentException("Rental not found for the given ID"));
+
+        // Check if the rental is already completed
+        if (Boolean.FALSE.equals(rental.getActive())) {
+            throw new IllegalStateException("Rental is already completed");
         }
-		
-		// Mark the rental as inactive
+
+        // Mark the rental as inactive
         rental.setActive(false);
         rental.setReturnedAt(LocalDateTime.now());
-        
-        // Mark the book as available
+
+        // Update the book's availability status
         Book book = rental.getBook();
         book.setAvailabilityStatus(true);
         bookRepository.save(book);
-		
-		rentalRepository.save(rental);
-	}
-	
+
+        // Save the updated rental
+        rentalRepository.save(rental);
+    }
 }

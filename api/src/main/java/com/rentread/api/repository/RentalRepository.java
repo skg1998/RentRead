@@ -11,4 +11,6 @@ public interface RentalRepository extends JpaRepository<Rental, Long>{
 
 	Optional<Rental> findByUserAndActive(User user, boolean b);
 
+	int countByUserAndActive(User user, boolean b);
+
 }
